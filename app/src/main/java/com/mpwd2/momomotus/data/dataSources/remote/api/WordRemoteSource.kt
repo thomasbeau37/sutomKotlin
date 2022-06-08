@@ -13,7 +13,7 @@ class WordRemoteSource @Inject constructor(private val wordApi: WordApi){
         if(cachedCategories == null){
             cachedCategories = wordApi.getAll()
             cachedCategories
-            cachedWords = cachedCategories.filter{word -> word.name.length >=5 && word.name.length<=10}
+            cachedWords = cachedCategories.filter{word -> word.name.length >=5 && word.name.length<=8}
         }
         return@withContext cachedCategories
     }
