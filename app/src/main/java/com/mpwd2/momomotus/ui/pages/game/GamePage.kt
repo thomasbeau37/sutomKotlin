@@ -2,8 +2,10 @@ package com.mpwd2.momomotus.ui.pages.game
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.FocusInteraction
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,7 +16,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.mpwd2.momomotus.data.entities.State
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.*
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.Placeholder
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 
 
 @Composable
@@ -29,7 +37,7 @@ fun GamePage(){
                     .wrapContentSize(Alignment.Center)
                 ) {
             WordRow(
-                nbRow = 6,  word = "poule"//word = state.data.name
+                nbRow = 6,  word = state.data.name
             )
         }
 //        Column(modifier = Modifier
@@ -47,25 +55,44 @@ fun GamePage(){
 
 @Composable
 fun LetterRow(letter: String,index: Int, modifier : Modifier){
-    var char = if(index == 0)letter else "."
+    var char = if(index == 0)letter else ""
     var text by remember { mutableStateOf(TextFieldValue(char)) }
-
+    var fm = LocalFocusManager.current
+    val enabled = if(index == 0)false else true
+    val readonly = if(index == 0)true else false
     val maxChar = 1
-
-    TextField(
+    var vide : Boolean by remember { mutableStateOf(true) }
+    Box(
         modifier = modifier,
-        singleLine = true,
-        value = text,
-        onValueChange = {
-                if(it.text.length <= maxChar && index != 0)
+    ) {
+        Box(
+            modifier = Modifier.border(1.dp, Color.White)
+        ) {
+
+        }
+        TextField(
+            textStyle = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
+            singleLine = true,
+            value = text,
+            placeholder = {Text(text = ".", color = Color.White)},
+            enabled = enabled,
+            readOnly = readonly,
+            onValueChange = {
+                if(it.text.length == maxChar && index != 0)
                 {
+                    text = it
+                    fm.moveFocus(FocusDirection.Next)
+                }else if(it.text.isEmpty()){
+                    vide = true
                     text = it
                 }
             },
-        colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = Color.Red
+            colors = TextFieldDefaults.textFieldColors(
+                textColor = Color.White,
+                disabledTextColor = Color.White
+            ),
         )
-    )
+    }
 }
 
 @Composable
@@ -81,8 +108,10 @@ fun WordRow(nbRow: Int, word: String){
                 LetterRow(letter = it.toString(),
                     index = index,
                     modifier = Modifier
-                    .weight(1f)
-                    .aspectRatio(1f))
+                        .weight(1f)
+                        .aspectRatio(1f)
+                        .fillMaxHeight()
+                        .border(1.dp, Color.White))
             }
         }
     }

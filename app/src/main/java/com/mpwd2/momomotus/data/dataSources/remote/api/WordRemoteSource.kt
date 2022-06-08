@@ -15,6 +15,6 @@ class WordRemoteSource @Inject constructor(private val wordApi: WordApi){
             cachedCategories
             cachedWords = cachedCategories.filter{word -> word.name.length >=5 && word.name.length<=8}
         }
-        return@withContext cachedCategories
+        return@withContext cachedWords!!
     }
 }
