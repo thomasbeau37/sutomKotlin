@@ -16,13 +16,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.mpwd2.momomotus.data.entities.State
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.*
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.input.key.*
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import com.mpwd2.momomotus.ui.pages.home.NavigationItem
 
 
 @Composable
@@ -37,6 +41,7 @@ fun GamePage(){
                     .wrapContentSize(Alignment.Center)
                 ) {
             WordRow(
+                vm = viewModel,
                 nbRow = 6,  word = state.data.name
             )
         }
@@ -53,8 +58,9 @@ fun GamePage(){
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun LetterRow(letter: String,index: Int, modifier : Modifier){
+fun LetterRow(letter: String,index: Int, modifier : Modifier, onValidating: (String) -> Unit){
     var char = if(index == 0)letter else ""
     var text by remember { mutableStateOf(TextFieldValue(char)) }
     var fm = LocalFocusManager.current
@@ -62,6 +68,8 @@ fun LetterRow(letter: String,index: Int, modifier : Modifier){
     val readonly = if(index == 0)true else false
     val maxChar = 1
     var vide : Boolean by remember { mutableStateOf(true) }
+
+    if(index == 0) onValidating(letter)
     Box(
         modifier = modifier,
     ) {
@@ -71,6 +79,12 @@ fun LetterRow(letter: String,index: Int, modifier : Modifier){
 
         }
         TextField(
+            modifier = Modifier.onKeyEvent {
+               if(it.key.keyCode == 287762808832){
+                   fm.moveFocus(FocusDirection.Previous)
+               }
+                true
+            },
             textStyle = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
             singleLine = true,
             value = text,
@@ -78,6 +92,7 @@ fun LetterRow(letter: String,index: Int, modifier : Modifier){
             enabled = enabled,
             readOnly = readonly,
             onValueChange = {
+                onValidating.invoke(it.text)
                 if(it.text.length == maxChar && index != 0)
                 {
                     text = it
@@ -96,7 +111,7 @@ fun LetterRow(letter: String,index: Int, modifier : Modifier){
 }
 
 @Composable
-fun WordRow(nbRow: Int, word: String){
+fun WordRow(nbRow: Int, word: String, vm: GameViewModel){
     for(i in 1..nbRow){
         Row(
             modifier = Modifier
@@ -111,8 +126,20 @@ fun WordRow(nbRow: Int, word: String){
                         .weight(1f)
                         .aspectRatio(1f)
                         .fillMaxHeight()
-                        .border(1.dp, Color.White))
+                        .border(1.dp, Color.White)){
+
+
+                    if(index >= vm.currentWord.length){
+                        vm.currentWord += it
+                    }
+                    println(index)
+                    println(vm.currentWord)
+                }
             }
         }
     }
+}
+
+fun LetterInput(string: String){
+    println(string)
 }

@@ -23,6 +23,9 @@ class GameViewModel @Inject constructor(private val repository: WordRepository):
     val state: StateFlow<State<Word>>
         get() = mState
 
+    var currentWord = ""
+
+
     private fun getWordOfTheDay(){
         viewModelScope.launch(Dispatchers.IO){
             try{
