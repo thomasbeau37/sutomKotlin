@@ -80,7 +80,7 @@ fun LetterRow(letter: String,index: Int, modifier : Modifier, onValidating: (Str
         }
         TextField(
             modifier = Modifier.onKeyEvent {
-               if(it.key.keyCode == 287762808832){
+                if(it.key == Key.Backspace){
                    fm.moveFocus(FocusDirection.Previous)
                }
                 true
@@ -128,12 +128,13 @@ fun WordRow(nbRow: Int, word: String, vm: GameViewModel){
                         .fillMaxHeight()
                         .border(1.dp, Color.White)){
 
+                  if(index >= vm.currentWord.length){
+                       vm.currentWord += it
+                   }
 
-                    if(index >= vm.currentWord.length){
-                        vm.currentWord += it
-                    }
-                    println(index)
-                    println(vm.currentWord)
+                    vm.checkWin()
+
+
                 }
             }
         }
