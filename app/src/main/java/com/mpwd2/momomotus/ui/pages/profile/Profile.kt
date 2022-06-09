@@ -14,25 +14,34 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.mpwd2.momomotus.R
+import com.mpwd2.momomotus.ui.pages.home.ProfileViewModel
 
 @Composable
 fun Profile() {
+    var vmProfile : ProfileViewModel = hiltViewModel()
+
+    var user =  vmProfile.getUser()
+
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = "Le pouler",
-            fontSize = 30.sp,
-            modifier = Modifier.padding(bottom = 20.dp)
+        user.pseudo?.let {
+            Text(
+                text = it,
+                fontSize = 30.sp,
+                modifier = Modifier.padding(bottom = 20.dp)
             )
+        }
         Card(
             modifier = Modifier.size(120.dp),
             shape = CircleShape,
             elevation = 12.dp
         )
         {
-            Image(
+            AsyncImage(
+                model = user.image,
                 modifier = Modifier.clip(CircleShape),
-                painter = painterResource(id = R.drawable.account),
                 contentDescription = "test",
                 contentScale = ContentScale.Crop,
             )
@@ -40,20 +49,26 @@ fun Profile() {
 
         Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start) {
             Card(
-                modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 20.dp),
                 elevation = 12.dp
             ){
-                Text(
-                    text = "Le Pouler",
-                    fontSize = 30.sp,
-                )
+                user.pseudo?.let {
+                    Text(
+                        text = it,
+                        fontSize = 30.sp,
+                    )
+                }
             }
 
-            Text(
-                text = "Pseudo",
-                fontSize = 30.sp,
-                modifier = Modifier.padding(top = 20.dp)
-            )
+            user.email?.let {
+                Text(
+                    text = it,
+                    fontSize = 30.sp,
+                    modifier = Modifier.padding(top = 20.dp)
+                )
+            }
             Text(
                 text = "18/01/1999",
                 fontSize = 30.sp,
