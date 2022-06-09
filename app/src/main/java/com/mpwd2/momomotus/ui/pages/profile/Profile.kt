@@ -12,6 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -26,13 +28,11 @@ fun Profile() {
     var user =  vmProfile.getUser()
 
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-        user.pseudo?.let {
-            Text(
-                text = it,
-                fontSize = 30.sp,
-                modifier = Modifier.padding(bottom = 20.dp)
-            )
-        }
+        Text(
+            text = "Profil",
+            fontSize = 30.sp,
+            modifier = Modifier.padding(bottom = 20.dp)
+        )
         Card(
             modifier = Modifier.size(120.dp),
             shape = CircleShape,
@@ -47,32 +47,39 @@ fun Profile() {
             )
         }
 
-        Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 20.dp),
-                elevation = 12.dp
-            ){
-                user.pseudo?.let {
-                    Text(
-                        text = it,
-                        fontSize = 30.sp,
-                    )
-                }
-            }
-
-            user.email?.let {
+        Column(modifier = Modifier.fillMaxWidth().padding(5.dp), horizontalAlignment = Alignment.Start) {
+            user.pseudo?.let {
+                Text(
+                    text = "Name:",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                )
                 Text(
                     text = it,
-                    fontSize = 30.sp,
-                    modifier = Modifier.padding(top = 20.dp)
+                    fontSize = 18.sp,
+                )
+            }
+            user.email?.let {
+                Text(
+                    modifier = Modifier.padding(top = 20.dp),
+                    text = "Email:",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = it,
+                    fontSize = 18.sp,
                 )
             }
             Text(
+                modifier = Modifier.padding(top = 20.dp),
+                text = "Birthdate:",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
                 text = "18/01/1999",
-                fontSize = 30.sp,
-                modifier = Modifier.padding(top = 20.dp)
+                fontSize = 18.sp,
             )
         }
 
