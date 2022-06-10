@@ -4,5 +4,6 @@ import androidx.compose.ui.graphics.Color
 
 data class Letter (
     val color: Color,
-    val enabled: Boolean
+    val enabled: Boolean,
+    val letter: String
 )

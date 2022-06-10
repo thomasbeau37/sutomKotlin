@@ -21,6 +21,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.input.key.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.TextStyle
@@ -65,11 +66,11 @@ fun GamePage(){
 @SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun LetterRow(vm: GameViewModel, letter: String,index: Int, modifier : Modifier, onValidating: (String) -> Unit){
-    var char = if(index == 0)letter else ""
+fun LetterRow(lett: String, enabled: Boolean,vm: GameViewModel, letter: String,index: Int, modifier : Modifier, onValidating: (String) -> Unit){
+    var char = if(index == 0)letter else lett
     var text by remember { mutableStateOf(TextFieldValue(char)) }
     var fm = LocalFocusManager.current
-    val enabled = if(index == 0)false else true
+    //val enabled = if(index == 0)false else true
     val readonly = if(index == 0)true else false
     val maxChar = 1
     var vide : Boolean by remember { mutableStateOf(true) }
@@ -119,7 +120,7 @@ fun LetterRow(vm: GameViewModel, letter: String,index: Int, modifier : Modifier,
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun WordRow(nbRow: Int, word: String, vm: GameViewModel){
-
+    val context = LocalContext.current
     for(i in 1..nbRow){
         Row(
             modifier = Modifier
@@ -129,18 +130,23 @@ fun WordRow(nbRow: Int, word: String, vm: GameViewModel){
         ) {
             word.toCharArray().forEachIndexed {index, it ->
                 var color = Color.Blue
-
+                var enabled = true
+                var lett = ""
                 val letterTab = vm.stateTest.collectAsState().value
                 if(letterTab is State.Success) {
-                    println("i:"+(i-1).toString()+" index:"+index.toString())
+                    //println("i:"+(i-1).toString()+" index:"+index.toString())
                     val letter = letterTab.data[i-1][index]
                     color = letter.color
-
+                    enabled = letter.enabled
+                    lett = letter.letter
                 }
                 else{
                     color = Color.Blue
                 }
-                LetterRow(vm = vm,
+                LetterRow(
+                    lett = lett,
+                    enabled = enabled,
+                    vm = vm,
                     letter = it.toString(),
                     index = index,
                     modifier = Modifier
@@ -152,8 +158,9 @@ fun WordRow(nbRow: Int, word: String, vm: GameViewModel){
 
                   if(index >= vm.currentWord.length){
                        vm.currentWord += it
+                      println(vm.currentWord)
                    }
-                    vm.checkWin()
+                    vm.checkWin(i-1, context)
                 }
             }
         }

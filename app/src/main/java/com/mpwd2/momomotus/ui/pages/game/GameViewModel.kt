@@ -1,5 +1,7 @@
 package com.mpwd2.momomotus.ui.pages.game
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
@@ -37,25 +39,29 @@ class GameViewModel @Inject constructor(private val repository: WordRepository):
     var letterTab: MutableList<MutableList<Letter>> = mutableListOf()
 
     fun initList(){
-        for(y in 1 until 4){
+        for(y in 1 until 7){
             var listLetter : MutableList<Letter> = mutableListOf()
-            for(i in 1 until motAtrouve.toList().size){
-                listLetter.add(Letter(Color.Blue, true))
+            for(i in 0 until motAtrouve.toList().size){
+                if(y == 1)listLetter.add(Letter(Color.Blue, false, ""))else listLetter.add(Letter(Color.Blue, true, ""))
             }
             letterTab.add(listLetter)
         }
     }
 
-    fun checkWin(){
+    fun checkWin(row: Int, mContext: Context){
         if(mState.value is State.Success ){
             if(motAtrouve.length == currentWord.length){
                 if(motAtrouve == currentWord){
                     println("win")
+                    val text = "Vous avez gagné !!"
+                    val duration = 1200
+                    val toast = Toast.makeText(mContext, text, duration)
+                    toast.show()
                 }else{
-                    checkLetter()
-                    println("nextrow")
-                    letterTab[0][1] = Letter(Color.Red, false)
+                    checkLetter(row)
                     mStateTest.value = State.success(letterTab)
+                    println("nextrow")
+                    //letterTab[row][letter] = Letter(Color.Red, false)
                     currentWord = ""
                 }
             }
@@ -63,23 +69,21 @@ class GameViewModel @Inject constructor(private val repository: WordRepository):
         }
     }
 
-    fun checkLetter(){
+    fun checkLetter(row: Int){
         var word = motAtrouve.toList()
         var line = currentWord.toList()
         for(i in 0..word.size-1){
             val motLettre = line[i]
             val motAtrouverLettre = word[i]
             if(motAtrouverLettre == motLettre){
-                println( motLettre+" bien placée")
-                //lettre bien placée
+                letterTab[row][i] = Letter(Color.Red, false, motLettre.toString())
             }
             else if(word.contains(motLettre) && motAtrouverLettre != motLettre){
-                //lettre dans le mot mais pas bien placée
-                println(motLettre+"dans le mot")
+                letterTab[row][i] = Letter(Color.Yellow, false, motLettre.toString())
             }
             else{
+                letterTab[row][i] = Letter(Color.Blue, false, motLettre.toString())
                 println(motLettre+" pas dans le mot")
-                //lettre pas dans mot
             }
         }
     }
