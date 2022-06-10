@@ -1,5 +1,6 @@
 package com.mpwd2.momomotus.ui.pages.game
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.FocusInteraction
@@ -34,7 +35,9 @@ fun GamePage(){
     val viewModel: GameViewModel = hiltViewModel()
     val state = viewModel.state.collectAsState().value
 
-    if(state is State.Success){
+    //if(state is State.Success){
+    if(1 == 1){
+        Text(text = "poule")//state.data.name)
         Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -42,7 +45,7 @@ fun GamePage(){
                 ) {
             WordRow(
                 vm = viewModel,
-                nbRow = 6,  word = state.data.name
+                nbRow = 6,  word = "poule"//state.data.name
             )
         }
 //        Column(modifier = Modifier
@@ -58,9 +61,10 @@ fun GamePage(){
     }
 }
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun LetterRow(letter: String,index: Int, modifier : Modifier, onValidating: (String) -> Unit){
+fun LetterRow(vm: GameViewModel, letter: String,index: Int, modifier : Modifier, onValidating: (String) -> Unit){
     var char = if(index == 0)letter else ""
     var text by remember { mutableStateOf(TextFieldValue(char)) }
     var fm = LocalFocusManager.current
@@ -69,12 +73,13 @@ fun LetterRow(letter: String,index: Int, modifier : Modifier, onValidating: (Str
     val maxChar = 1
     var vide : Boolean by remember { mutableStateOf(true) }
 
+
+
     if(index == 0) onValidating(letter)
     Box(
         modifier = modifier,
     ) {
         Box(
-            modifier = Modifier.border(1.dp, Color.White)
         ) {
 
         }
@@ -110,31 +115,46 @@ fun LetterRow(letter: String,index: Int, modifier : Modifier, onValidating: (Str
     }
 }
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun WordRow(nbRow: Int, word: String, vm: GameViewModel){
+    var color = Color.Blue
+
+    if(vm.stateTest.value is State.Success) {
+        println("entré")
+        println(vm.stateTest.collectAsState().value)
+        if (vm.stateTest.collectAsState().value == State.success("rouge")) {
+            color = Color.Red
+        }
+        else {
+            color = Color.Blue
+        }
+    }
+    else{
+        color = Color.Blue
+    }
     for(i in 1..nbRow){
         Row(
             modifier = Modifier
                 .background(Color.Blue)
                 .fillMaxWidth()
-                .border(1.dp, Color.White)
+                //.border(1.dp, Color.White)
         ) {
             word.toCharArray().forEachIndexed {index, it ->
-                LetterRow(letter = it.toString(),
+                LetterRow(vm = vm,
+                    letter = it.toString(),
                     index = index,
                     modifier = Modifier
+                        .background(color)
                         .weight(1f)
                         .aspectRatio(1f)
                         .fillMaxHeight()
-                        .border(1.dp, Color.White)){
+                        .border(1.dp, Color.Black)){
 
                   if(index >= vm.currentWord.length){
                        vm.currentWord += it
                    }
-
                     vm.checkWin()
-
-
                 }
             }
         }
