@@ -27,6 +27,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
+import com.mpwd2.momomotus.data.entities.Letter
 import com.mpwd2.momomotus.ui.pages.home.NavigationItem
 
 
@@ -118,21 +119,7 @@ fun LetterRow(vm: GameViewModel, letter: String,index: Int, modifier : Modifier,
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun WordRow(nbRow: Int, word: String, vm: GameViewModel){
-    var color = Color.Blue
 
-    if(vm.stateTest.value is State.Success) {
-        println("entré")
-        println(vm.stateTest.collectAsState().value)
-        if (vm.stateTest.collectAsState().value == State.success("rouge")) {
-            color = Color.Red
-        }
-        else {
-            color = Color.Blue
-        }
-    }
-    else{
-        color = Color.Blue
-    }
     for(i in 1..nbRow){
         Row(
             modifier = Modifier
@@ -141,6 +128,18 @@ fun WordRow(nbRow: Int, word: String, vm: GameViewModel){
                 //.border(1.dp, Color.White)
         ) {
             word.toCharArray().forEachIndexed {index, it ->
+                var color = Color.Blue
+
+                val letterTab = vm.stateTest.collectAsState().value
+                if(letterTab is State.Success) {
+                    println("i:"+(i-1).toString()+" index:"+index.toString())
+                    val letter = letterTab.data[i-1][index]
+                    color = letter.color
+
+                }
+                else{
+                    color = Color.Blue
+                }
                 LetterRow(vm = vm,
                     letter = it.toString(),
                     index = index,

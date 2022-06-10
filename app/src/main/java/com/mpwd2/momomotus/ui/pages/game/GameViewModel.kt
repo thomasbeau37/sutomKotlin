@@ -37,7 +37,7 @@ class GameViewModel @Inject constructor(private val repository: WordRepository):
     var letterTab: MutableList<MutableList<Letter>> = mutableListOf()
 
     fun initList(){
-        for(y in 1 until 5){
+        for(y in 1 until 4){
             var listLetter : MutableList<Letter> = mutableListOf()
             for(i in 1 until motAtrouve.toList().size){
                 listLetter.add(Letter(Color.Blue, true))
