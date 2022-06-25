@@ -30,7 +30,7 @@ import dagger.hilt.android.AndroidEntryPoint
 fun HomePage(navController: NavHostController) {
     val viewModel: HomeViewModel = hiltViewModel()
 
-    viewModel.getUser()
+    //viewModel.getUser()
     val bottomNavigationController = rememberNavController()
     val items = listOf(
         NavigationItem.Home,
@@ -41,7 +41,7 @@ fun HomePage(navController: NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { (Text(text = "Coucou "+ viewModel.getUser().pseudo)) }
+                title = { (Text(text = "Coucou ")) }//+ viewModel.getUser().pseudo
             )
         },
         bottomBar = {

@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun NavigationApp() {
     val navController = rememberNavController()
-    NavHost(navController, startDestination = NavigationKeys.Route.SIGN_UP ){
+    NavHost(navController, startDestination = NavigationKeys.Route.HOME ){
         composable(route = NavigationKeys.Route.SIGN_UP){
             SignUpPage(navController = navController)
         }

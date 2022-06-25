@@ -24,17 +24,22 @@ class GameViewModel @Inject constructor(private val repository: WordRepository):
         getWordOfTheDay()
     }
 
-    private lateinit var motAtrouve : String
+    lateinit var motAtrouve : String
     private val mState = MutableStateFlow<State<Word>>(State.loading())
     val state: StateFlow<State<Word>>
         get() = mState
 
     var currentWord = ""
+    var mStateCurWord = MutableStateFlow<State<String>>(State.loading())
+    val stateCurWord: StateFlow<State<String>>
+        get() = mStateCurWord
 
 
     var mStateTest = MutableStateFlow<State<MutableList<MutableList<Letter>>>>(State.loading())
     val stateTest: StateFlow<State<MutableList<MutableList<Letter>>>>
         get() = mStateTest
+
+
 
     var letterTab: MutableList<MutableList<Letter>> = mutableListOf()
 
@@ -49,7 +54,7 @@ class GameViewModel @Inject constructor(private val repository: WordRepository):
     }
 
     fun checkWin(row: Int, mContext: Context){
-        if(mState.value is State.Success ){
+        if(mState.value is State.Success){
             if(motAtrouve.length == currentWord.length){
                 if(motAtrouve == currentWord){
                     println("win")
@@ -59,7 +64,7 @@ class GameViewModel @Inject constructor(private val repository: WordRepository):
                     toast.show()
                 }else{
                     checkLetter(row)
-                    mStateTest.value = State.success(letterTab)
+                    //mStateTest.value = State.success(letterTab)
                     println("nextrow")
                     //letterTab[row][letter] = Letter(Color.Red, false)
                     currentWord = ""
@@ -70,6 +75,7 @@ class GameViewModel @Inject constructor(private val repository: WordRepository):
     }
 
     fun checkLetter(row: Int){
+        println("row:" +row.toString())
         var word = motAtrouve.toList()
         var line = currentWord.toList()
         for(i in 0..word.size-1){
@@ -86,6 +92,7 @@ class GameViewModel @Inject constructor(private val repository: WordRepository):
                 println(motLettre+" pas dans le mot")
             }
         }
+        mStateTest.value = State.success(letterTab)
     }
 
     private fun getWordOfTheDay(){

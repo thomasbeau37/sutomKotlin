@@ -66,7 +66,7 @@ fun GamePage(){
 @SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun LetterRow(lett: String, enabled: Boolean,vm: GameViewModel, letter: String,index: Int, modifier : Modifier, onValidating: (String) -> Unit){
+fun LetterRow(row: Int, lett: String, enabled: Boolean,vm: GameViewModel, letter: String,index: Int, modifier : Modifier, onValidating: (String) -> Unit){
     var char = if(index == 0)letter else lett
     var text by remember { mutableStateOf(TextFieldValue(char)) }
     var fm = LocalFocusManager.current
@@ -75,7 +75,7 @@ fun LetterRow(lett: String, enabled: Boolean,vm: GameViewModel, letter: String,i
     val maxChar = 1
     var vide : Boolean by remember { mutableStateOf(true) }
 
-
+    val context = LocalContext.current
 
     if(index == 0) onValidating(letter)
     Box(
@@ -107,6 +107,7 @@ fun LetterRow(lett: String, enabled: Boolean,vm: GameViewModel, letter: String,i
                 }else if(it.text.isEmpty()){
                     vide = true
                     text = it
+                    vm.currentWord += it
                 }
             },
             colors = TextFieldDefaults.textFieldColors(
@@ -131,6 +132,9 @@ fun WordRow(nbRow: Int, word: String, vm: GameViewModel){
             word.toCharArray().forEachIndexed {index, it ->
                 var color = Color.Blue
                 var enabled = true
+                if(index == 0){
+                    enabled = false
+                }
                 var lett = ""
                 val letterTab = vm.stateTest.collectAsState().value
                 if(letterTab is State.Success) {
@@ -144,6 +148,7 @@ fun WordRow(nbRow: Int, word: String, vm: GameViewModel){
                     color = Color.Blue
                 }
                 LetterRow(
+                    row = i,
                     lett = lett,
                     enabled = enabled,
                     vm = vm,
@@ -156,16 +161,21 @@ fun WordRow(nbRow: Int, word: String, vm: GameViewModel){
                         .fillMaxHeight()
                         .border(1.dp, Color.Black)){
 
-                  if(index >= vm.currentWord.length){
-                       vm.currentWord += it
-                      println(vm.currentWord)
-                   }
-                    vm.checkWin(i-1, context)
+                        if(index >= vm.currentWord.length){
+                            vm.currentWord += it
+                            println(vm.currentWord)
+                        }else if(index == 0){
+                            vm.currentWord = vm.motAtrouve.first().toString()
+                        }
+
+                        vm.checkWin(i-1, context)
+
+                    }
                 }
             }
         }
     }
-}
+
 
 fun LetterInput(string: String){
     println(string)
